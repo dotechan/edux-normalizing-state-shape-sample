@@ -1,23 +1,39 @@
-import logo from './logo.svg';
-import './App.css';
+import React from "react";
+import { useSelector, useDispatch } from "react-redux";
+
+import { fetchItems, itemAdded } from "./list/itemsSlice";
+import List from "./list/List";
 
 function App() {
+  const dispatch = useDispatch();
+  const items = useSelector((state) => state.items.entities);
+
+  React.useEffect(() => {
+    dispatch(fetchItems());
+  }, [dispatch]);
+
+  const handleClick = React.useCallback(
+    (e) => {
+      const newItemId =
+        items.reduce(
+          (previousValue, currentValue) =>
+            Math.max(previousValue, currentValue.id),
+          0
+        ) + 1;
+      const newItem = {
+        id: newItemId,
+        name: `name_${newItemId}`,
+      };
+      dispatch(itemAdded(newItem));
+      e.stopPropagation();
+    },
+    [dispatch, items]
+  );
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+    <div>
+      <button onClick={handleClick}>Add Item</button>
+      <List items={items}></List>
     </div>
   );
 }

@@ -2,7 +2,7 @@ import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 
 const initialState = {
   status: "idle",
-  entities: [],
+  entities: {},
 };
 
 export const fetchItems = createAsyncThunk("items/fetchItems", async () => {
@@ -19,13 +19,9 @@ export const itemsSlice = createSlice({
   name: "items",
   initialState,
   reducers: {
-    itemsLoading: (state, action) => {
-      const items = action.payload;
-      state.entities = items;
-    },
     itemAdded: (state, action) => {
       const item = action.payload;
-      state.entities.push(item);
+      state.entities[item.id] = item;
     },
   },
   extraReducers: (builder) => {
@@ -34,13 +30,17 @@ export const itemsSlice = createSlice({
         state.status = "loading";
       })
       .addCase(fetchItems.fulfilled, (state, action) => {
-        // 悪い例なのであえてAPIのレスポンスの配列をそのまま格納している
-        state.entities = action.payload.items;
-        state.status = "idle";
+        const items = action.payload.items;
+        const newItems = {};
+        for (const item of items) {
+          newItems[item.id] = item;
+        }
+        state.entities = newItems;
+        state.status = "loaded";
       });
   },
 });
 
-export const { itemsLoading, itemAdded } = itemsSlice.actions;
+export const { itemAdded } = itemsSlice.actions;
 
 export default itemsSlice.reducer;

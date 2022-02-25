@@ -6,7 +6,7 @@ import List from "./list/List";
 
 function App() {
   const dispatch = useDispatch();
-  const items = useSelector((state) => state.items.entities);
+  const { status, entities } = useSelector((state) => state.items);
 
   React.useEffect(() => {
     dispatch(fetchItems());
@@ -15,9 +15,9 @@ function App() {
   const handleClick = React.useCallback(
     (e) => {
       const newItemId =
-        items.reduce(
+        Object.keys(entities).reduce(
           (previousValue, currentValue) =>
-            Math.max(previousValue, currentValue.id),
+            Math.max(previousValue, currentValue),
           0
         ) + 1;
       const newItem = {
@@ -27,13 +27,17 @@ function App() {
       dispatch(itemAdded(newItem));
       e.stopPropagation();
     },
-    [dispatch, items]
+    [dispatch, entities]
   );
+
+  if (status !== "loaded") {
+    return <div>Loading...</div>;
+  }
 
   return (
     <div>
       <button onClick={handleClick}>Add Item</button>
-      <List items={items}></List>
+      <List itemIds={Object.keys(entities)}></List>
     </div>
   );
 }

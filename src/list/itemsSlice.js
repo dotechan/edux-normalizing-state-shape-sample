@@ -1,4 +1,8 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
+import {
+  createSlice,
+  createAsyncThunk,
+  createSelector,
+} from "@reduxjs/toolkit";
 
 const initialState = {
   status: "idle",
@@ -42,5 +46,15 @@ export const itemsSlice = createSlice({
 });
 
 export const { itemAdded } = itemsSlice.actions;
+
+const selectItems = (state) => state.items.entities;
+const selectItemId = (state, itemId) => itemId;
+
+export const selectItemById = createSelector(
+  [selectItems, selectItemId],
+  (items, itemId) => {
+    return items[itemId];
+  }
+);
 
 export default itemsSlice.reducer;

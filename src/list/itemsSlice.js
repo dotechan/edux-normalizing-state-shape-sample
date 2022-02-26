@@ -19,10 +19,6 @@ export const itemsSlice = createSlice({
   name: "items",
   initialState,
   reducers: {
-    itemsLoading: (state, action) => {
-      const items = action.payload;
-      state.entities = items;
-    },
     itemAdded: (state, action) => {
       const item = action.payload;
       state.entities.push(item);

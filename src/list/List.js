@@ -10,14 +10,16 @@ function ListItem({ item }) {
   );
 }
 
+const MemoizedListItem = React.memo(ListItem);
+
 function List({ items }) {
   return (
     <ul className="ul">
       {items.map((item) => (
-        <ListItem item={item} />
+        <MemoizedListItem item={item} />
       ))}
     </ul>
   );
 }
 
-export default List;
+export default React.memo(List);
